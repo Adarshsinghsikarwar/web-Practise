@@ -2,15 +2,15 @@ const Note = require("../models/notes.model");
 
 const createNote = async (req, res) => {
   try {
-    const { id, title, content } = req.body;
-    if (!id || !title || !content) {
+    const { title, content } = req.body;
+    if (!title || !content) {
       return res.status(400).json({
         success: false,
-        message: "All field is required",
+        message: "All fields are required",
       });
     }
     const note = new Note({
-      id,
+      id: Date.now(),
       title,
       content,
       user: req.user.id,
@@ -31,8 +31,8 @@ const createNote = async (req, res) => {
 
 const getNote = async (req, res) => {
   try {
-    const Notes = await Note.find();
-    if (Notes.length === 0) {
+    const notes = await Note.find();
+    if (notes.length === 0) {
       return res.status(404).json({
         success: false,
         message: "No notes found",
@@ -40,7 +40,7 @@ const getNote = async (req, res) => {
     }
     return res.status(200).json({
       success: true,
-      Notes,
+      notes,
     });
   } catch (error) {
     console.log(error);
@@ -90,14 +90,14 @@ const deleteOneNote = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const note = await Note.findById(id);
+    const note = await Note.findOne({ id: id });
     if (!note) {
       return res.status(404).json({
         success: false,
         message: "Note not found",
       });
     }
-    await Note.findByIdAndDelete(id);
+    await Note.findOneAndDelete({ id: id });
     return res.status(200).json({
       success: true,
       message: "Note deleted successfully",
@@ -114,13 +114,17 @@ const updateOneNote = async (req, res) => {
   try {
     const NoteId = req.params.id;
     const { title, content } = req.body;
-    if (!NoteId) {
+
+    // Check if the note exists before attempting update
+    const note = await Note.findOne({ id: NoteId });
+    if (!note) {
       return res.status(404).json({
         success: false,
         message: "Note not found",
       });
     }
-    const note = await Note.findByIdAndUpdate(NoteId, { title, content });
+
+    await Note.findOneAndUpdate({ id: NoteId }, { title, content });
     return res.status(200).json({
       success: true,
       message: "Note updated successfully",

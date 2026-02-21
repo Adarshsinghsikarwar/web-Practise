@@ -12,7 +12,9 @@ const Navbar = () => {
           }`
         }
         to="/"
-      >Home</NavLink>
+      >
+        Home
+      </NavLink>
       <NavLink
         className={({ isActive }) =>
           `px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
