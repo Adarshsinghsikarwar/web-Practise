@@ -19,6 +19,7 @@ const createNote = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "Note Created successfully 🔥🔥",
+      note,
     });
   } catch (error) {
     console.log(error);
@@ -32,12 +33,6 @@ const createNote = async (req, res) => {
 const getNote = async (req, res) => {
   try {
     const notes = await Note.find();
-    if (notes.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No notes found",
-      });
-    }
     return res.status(200).json({
       success: true,
       notes,

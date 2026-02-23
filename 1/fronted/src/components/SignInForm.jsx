@@ -1,8 +1,10 @@
 import axios from "../api/config";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const SignInForm = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -15,6 +17,7 @@ const SignInForm = () => {
       const response = await axios.post("/auth/login", data);
       if (response.data.success) {
         toast.success(response.data.message);
+        navigate("/"); // ✅ redirect to Home after login
       } else {
         toast.error(response.data.message);
       }
@@ -35,7 +38,13 @@ const SignInForm = () => {
           </label>
           <input
             className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-            {...register("email", { required: "Email is required" })}
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Invalid email format",
+              },
+            })}
             type="email"
             placeholder="Enter your email"
           />
@@ -63,7 +72,7 @@ const SignInForm = () => {
 
         <button className="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-lg shadow-blue-500/30 transition-all transform hover:-translate-y-0.5 mt-4">
           Sign In
-        </button>
+            </button>
       </form>
     </div>
   );

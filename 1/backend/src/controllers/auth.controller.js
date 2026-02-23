@@ -108,4 +108,12 @@ const logout = async (req, res) => {
   });
 };
 
-module.exports = { register, login, logout };
+const me = async (req, res) => {
+  // req.user is already set by authMiddleware
+  return res.json({
+    success: true,
+    user: req.user,
+  });
+};
+
+module.exports = { register, login, logout, me };
